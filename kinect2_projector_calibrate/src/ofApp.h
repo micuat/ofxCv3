@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxKinectForWindows2.h"
-#include "opencv2/core.hpp"
+#include "opencv2/opencv.hpp"
 
 class ofApp : public ofBaseApp{
 
@@ -23,4 +23,6 @@ public:
 
     ofxKFW2::Device kinect;
     cv::Mat image;
+    cv::Size chessSize;
+    vector<cv::Point2f> imagePointsCamera, imagePointsProjector;
 };

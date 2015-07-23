@@ -7,23 +7,36 @@ void ofApp::setup(){
     kinect.open();
     kinect.initDepthSource();
     kinect.initColorSource();
+
+    chessSize = Size(5, 4);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
 	kinect.update();
-    bool patternWasFound;
-//    patternWasFound = findChessboardCorners(image, chessSize, imagePointsCamera, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS | CV_CALIB_CB_NORMALIZE_IMAGE);
+    ofPixels& pixels = kinect.getColorSource()->getPixels();
+    if (pixels.isAllocated() == false) return;
+
+    if (image.empty())
+        image = Mat(pixels.getHeight(), pixels.getWidth(), CV_MAKETYPE(CV_8U, 4), pixels.getPixels(), 0);
+    else
+        image.data = pixels.getPixels();
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-	kinect.getColorSource()->draw(0, 0);
+    kinect.getColorSource()->draw(0, 0);
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-
+    if (key == ' ')
+    {
+        bool patternWasFound;
+        patternWasFound = findChessboardCorners(image, chessSize, imagePointsCamera, CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FILTER_QUADS | CV_CALIB_CB_NORMALIZE_IMAGE);
+        drawChessboardCorners(image, chessSize, imagePointsCamera, patternWasFound);
+        imshow("camera", image);
+    }
 }
 
 //--------------------------------------------------------------
